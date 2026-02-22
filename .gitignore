@@ -1,0 +1,37 @@
+# Environment files
+.env
+.env.local
+*.env
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Logs
+*.log
+error.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# PHP
+.php_cs.cache
+
+# Node (if used in future)
+node_modules/
+package-lock.json
+yarn.lock
+
+# Database backups
+*.sql.bak
+*.sql.backup
