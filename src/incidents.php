@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['report_incident'])) {
 	if (empty($incident_date) || empty($incident_time) || empty($location) || empty($barangay) || 
 	    empty($animal_type) || empty($victim_name) || empty($injury_description)) {
 		$error = "⚠ Please fill out all required fields (marked with *)";
-	} else if (strtotime($incident_date) > time()) {
+	} else if (strtotime($incident_date) > strtotime(date('Y-m-d'))) {
 		$error = "⚠ Incident date cannot be in the future";
 	} else if (!in_array($severity, ['Low', 'Medium', 'High', 'Critical'])) {
 		$error = "⚠ Invalid severity level";
@@ -57,34 +57,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['report_incident'])) {
 			$error = "❌ Database error: " . $conn->error;
 		} else {
 			$stmt->bind_param(
-				"issssssssssissss",
+				"isssssssssisssss",
 				$user_id, $incident_date, $incident_time, $location, $barangay, $animal_type, 
 				$animal_color, $animal_size, $animal_features, $victim_name, $victim_age, $victim_contact, 
 				$injury_description, $severity, $treatment, $remarks
 			);
 
-			if ($stmt->execute()) {
-				$success = "✅ Incident report submitted successfully! Reference ID: #" . $conn->insert_id;
+			if (!$stmt->execute()) {
+				$error = "❌ Error submitting report: " . $stmt->error;
+			} else {
+				$success = true;
+				$success_id = $conn->insert_id;
 
 				$incident_date = $incident_time = $location = $barangay = $animal_type = $animal_color = '';
 				$animal_size = $animal_features = $victim_name = $victim_age = $victim_contact = '';
 				$injury_description = $severity = $treatment = $remarks = '';
-			} else {
-				$error = "❌ Error submitting report: " . $stmt->error;
 			}
 			$stmt->close();
 		}
 	}
 }
-
-$incidents_query = $conn->query("
-	SELECT id, incident_date, incident_time, location, barangay, animal_type, 
-	       victim_name, injury_description, severity_level, status, created_at 
-	FROM incidents 
-	WHERE user_id = '$user_id' 
-	ORDER BY created_at DESC 
-	LIMIT 10
-");
 
 $activePage = 'incidents';
 ?>
@@ -96,295 +88,11 @@ $activePage = 'incidents';
   <title>Report Incident – Marikina Animal & Welfare</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
-
-  <style>
-    :root {
-      --primary: #2c7d4e;
-      --primary-dark: #1e5c38;
-      --accent: #e67e22;
-      --danger: #dc2626;
-      --warning: #f59e0b;
-      --success: #10b981;
-      --text: #2d3748;
-      --text-light: #4b5563;
-      --bg: #f8fafc;
-      --card: #ffffff;
-      --border: #e2e8f0;
-    }
-
-    * { margin:0; padding:0; box-sizing:border-box; }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-      min-height: 100vh;
-      margin-left: 280px;
-    }
-
-    .main-content {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 40px 24px;
-    }
-
-    .page-title {
-      font-family: 'Playfair Display', serif;
-      color: var(--primary-dark);
-      font-size: 2.4rem;
-      margin-bottom: 12px;
-    }
-
-    .page-subtitle {
-      color: var(--text-light);
-      font-size: 1rem;
-      margin-bottom: 30px;
-    }
-
-    .alert {
-      padding: 16px 20px;
-      border-radius: 12px;
-      margin-bottom: 24px;
-      font-weight: 500;
-    }
-
-    .alert-success {
-      background: #d1fae5;
-      color: #065f46;
-      border-left: 4px solid var(--success);
-    }
-
-    .alert-error {
-      background: #fee2e2;
-      color: #991b1b;
-      border-left: 4px solid var(--danger);
-    }
-
-    .form-container {
-      background: var(--card);
-      border-radius: 12px;
-      padding: 32px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      margin-bottom: 40px;
-    }
-
-    .form-section {
-      margin-bottom: 32px;
-    }
-
-    .form-section-title {
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: var(--primary-dark);
-      margin-bottom: 16px;
-      padding-bottom: 12px;
-      border-bottom: 2px solid var(--border);
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
-    }
-
-    .form-grid.full {
-      grid-template-columns: 1fr;
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .form-group label {
-      font-weight: 600;
-      margin-bottom: 8px;
-      color: var(--text);
-      font-size: 0.95rem;
-    }
-
-    .required {
-      color: var(--danger);
-    }
-
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-      padding: 12px 14px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font-family: 'Inter', sans-serif;
-      font-size: 0.95rem;
-      transition: all 0.2s;
-    }
-
-    .form-group input:focus,
-    .form-group select:focus,
-    .form-group textarea:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(44, 125, 78, 0.1);
-    }
-
-    .form-group textarea {
-      resize: vertical;
-      min-height: 100px;
-    }
-
-    .submit-btn {
-      background: var(--primary);
-      color: white;
-      padding: 14px 32px;
-      border: none;
-      border-radius: 8px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      width: 100%;
-    }
-
-    .submit-btn:hover {
-      background: var(--primary-dark);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(44, 125, 78, 0.2);
-    }
-
-    .incidents-section {
-      margin-top: 50px;
-    }
-
-    .incidents-title {
-      font-family: 'Playfair Display', serif;
-      color: var(--primary-dark);
-      font-size: 1.8rem;
-      margin-bottom: 24px;
-    }
-
-    .incidents-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 20px;
-    }
-
-    .incident-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      transition: all 0.3s ease;
-    }
-
-    .incident-card:hover {
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-      transform: translateY(-4px);
-    }
-
-    .incident-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: start;
-      margin-bottom: 12px;
-    }
-
-    .incident-date {
-      font-size: 0.85rem;
-      color: var(--text-light);
-      font-weight: 500;
-    }
-
-    .severity-badge {
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 600;
-    }
-
-    .severity-low {
-      background: #d1fae5;
-      color: #065f46;
-    }
-
-    .severity-medium {
-      background: #fef3c7;
-      color: #92400e;
-    }
-
-    .severity-high {
-      background: #fed7aa;
-      color: #92400e;
-    }
-
-    .severity-critical {
-      background: #fee2e2;
-      color: #991b1b;
-    }
-
-    .status-badge {
-      display: inline-block;
-      padding: 4px 10px;
-      border-radius: 12px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      margin-bottom: 12px;
-    }
-
-    .status-new {
-      background: #dbeafe;
-      color: #1e40af;
-    }
-
-    .status-review {
-      background: #fef3c7;
-      color: #92400e;
-    }
-
-    .status-resolved {
-      background: #d1fae5;
-      color: #065f46;
-    }
-
-    .incident-info {
-      margin-bottom: 12px;
-    }
-
-    .incident-label {
-      font-size: 0.8rem;
-      color: var(--text-light);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      font-weight: 600;
-    }
-
-    .incident-value {
-      font-size: 0.95rem;
-      color: var(--text);
-      margin-top: 4px;
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 40px 20px;
-      color: var(--text-light);
-    }
-
-    .empty-state-icon {
-      font-size: 3rem;
-      margin-bottom: 16px;
-    }
-
-    @media (max-width: 768px) {
-      body { margin-left: 0; }
-      .main-content { padding: 20px; }
-      .page-title { font-size: 1.8rem; }
-      .form-container { padding: 20px; }
-      .form-grid { grid-template-columns: 1fr; }
-      .incidents-grid { grid-template-columns: 1fr; }
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/variables.css">
+  <link rel="stylesheet" href="../assets/css/nav.css">
+  <link rel="stylesheet" href="../assets/css/admin.css">
+  <link rel="stylesheet" href="../assets/css/forms.css">
 </head>
 <body>
 
@@ -395,12 +103,20 @@ $activePage = 'incidents';
   <h1 class="page-title">Report Incident / Bite Case</h1>
   <p class="page-subtitle">Help us keep the community safe by reporting animal incidents</p>
 
-  <?php if (!empty($success)): ?>
-    <div class="alert alert-success"><?php echo $success; ?></div>
-  <?php endif; ?>
-
   <?php if (!empty($error)): ?>
     <div class="alert alert-error"><?php echo $error; ?></div>
+  <?php endif; ?>
+
+  <?php if (!empty($success)): ?>
+  <div id="successModal" class="modal" style="display:flex;">
+    <div class="modal-content" style="max-width:420px; text-align:center; padding:40px 32px;">
+      <div style="font-size:3rem; margin-bottom:16px;">✅</div>
+      <h2 style="color:var(--success); margin-bottom:12px;">Report Submitted!</h2>
+      <p style="color:var(--text-light); margin-bottom:8px;">Your incident report has been submitted successfully.</p>
+      <p style="font-weight:600; color:var(--text-color); margin-bottom:24px;">Reference ID: #<?php echo $success_id; ?></p>
+      <a href="my-incidents.php" class="btn btn-primary" style="display:inline-block; padding:12px 32px; border-radius:8px; background:var(--btn-primary); color:white; text-decoration:none; font-weight:600;">OK</a>
+    </div>
+  </div>
   <?php endif; ?>
 
   <!-- Incident Report Form -->
@@ -541,66 +257,6 @@ $activePage = 'incidents';
       <button type="submit" name="report_incident" class="submit-btn">Submit Incident Report</button>
 
     </form>
-  </div>
-
-  <!-- My Reported Incidents Section -->
-  <div class="incidents-section">
-    <h2 class="incidents-title">My Reported Incidents</h2>
-    
-    <?php if ($incidents_query && $incidents_query->num_rows > 0): ?>
-      <div class="incidents-grid">
-        <?php while ($incident = $incidents_query->fetch_assoc()): 
-          $status_class = 'status-' . strtolower(str_replace(' ', '-', $incident['status']));
-          $severity_class = 'severity-' . strtolower($incident['severity_level']);
-        ?>
-          <div class="incident-card">
-            <div class="incident-header">
-              <div class="incident-date">
-                <?php echo date('M d, Y', strtotime($incident['incident_date'])); ?> 
-                at <?php echo date('h:i A', strtotime($incident['incident_time'])); ?>
-              </div>
-              <span class="severity-badge <?php echo $severity_class; ?>">
-                <?php echo htmlspecialchars($incident['severity_level']); ?>
-              </span>
-            </div>
-
-            <span class="status-badge <?php echo $status_class; ?>">
-              <?php echo htmlspecialchars($incident['status']); ?>
-            </span>
-
-            <div class="incident-info">
-              <div class="incident-label">📍 Location</div>
-              <div class="incident-value"><?php echo htmlspecialchars($incident['barangay'] . ' - ' . $incident['location']); ?></div>
-            </div>
-
-            <div class="incident-info">
-              <div class="incident-label">Animal Type</div>
-              <div class="incident-value"><?php echo htmlspecialchars($incident['animal_type']); ?></div>
-            </div>
-
-            <div class="incident-info">
-              <div class="incident-label">👤 Victim</div>
-              <div class="incident-value"><?php echo htmlspecialchars($incident['victim_name']); ?></div>
-            </div>
-
-            <div class="incident-info">
-              <div class="incident-label">⚠️ Injury</div>
-              <div class="incident-value"><?php echo htmlspecialchars(substr($incident['injury_description'], 0, 60)) . (strlen($incident['injury_description']) > 60 ? '...' : ''); ?></div>
-            </div>
-
-            <div class="incident-info">
-              <div class="incident-label">Reported On</div>
-              <div class="incident-value"><?php echo date('M d, Y', strtotime($incident['created_at'])); ?></div>
-            </div>
-          </div>
-        <?php endwhile; ?>
-      </div>
-    <?php else: ?>
-      <div class="empty-state">
-        <div class="empty-state-icon">📭</div>
-        <p>No incident reports yet. Submit your first report above.</p>
-      </div>
-    <?php endif; ?>
   </div>
 
 </div>

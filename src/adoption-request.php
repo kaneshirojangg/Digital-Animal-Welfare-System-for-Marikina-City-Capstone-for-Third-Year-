@@ -1,91 +1,169 @@
 <?php
-include 'session-handler.php';
-session_start();
+// Enable error reporting and logging
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+ini_set('error_log', dirname(__FILE__) . '/../logs/error.log');
 
-if (!isset($_SESSION['loggedIn']) || $_SESSION['loggedIn'] !== true) {
-    header("Location: login.php");
-    exit();
+// Ensure logs directory exists
+if (!is_dir(dirname(__FILE__) . '/../logs')) {
+    @mkdir(dirname(__FILE__) . '/../logs', 0777, true);
 }
 
-$conn = new mysqli('localhost', 'marikina_user', 'marikina_password', 'marikina_db');
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+// Start output buffering to catch any errors
+ob_start();
 
-$animalId = isset($_GET['animal_id']) ? intval($_GET['animal_id']) : 0;
+try {
+    include 'session-handler.php';
+    session_start();
 
-if ($animalId <= 0) {
-    header("Location: adopt-animal.php");
-    exit();
-}
-
-$stmt = $conn->prepare("SELECT id, name, type, age, gender FROM animals WHERE id = ? AND status = 'Available for Adoption'");
-$stmt->bind_param("i", $animalId);
-$stmt->execute();
-$result = $stmt->get_result();
-
-if ($result->num_rows === 0) {
-    $stmt->close();
-    $conn->close();
-    header("Location: adopt-animal.php");
-    exit();
-}
-
-$animal = $result->fetch_assoc();
-$stmt->close();
-
-$submitted = false;
-$error = false;
-$errorMsg = "";
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-    $applicantName = trim($_POST['applicant_name'] ?? '');
-    $email = trim($_POST['email'] ?? '');
-    $phone = trim($_POST['phone'] ?? '');
-    $address = trim($_POST['address'] ?? '');
-    $city = trim($_POST['city'] ?? '');
-    $postalCode = trim($_POST['postal_code'] ?? '');
-    $employment = trim($_POST['employment'] ?? '');
-    $homeType = trim($_POST['home_type'] ?? '');
-    $homeOwnership = trim($_POST['home_ownership'] ?? '');
-    $rentalPermission = isset($_POST['rental_permission']) ? 1 : 0;
-    $haveYard = isset($_POST['have_yard']) && $_POST['have_yard'] !== '' ? $_POST['have_yard'] : null;
-    $otherPets = trim($_POST['other_pets'] ?? '');
-    $children = isset($_POST['children']) ? 1 : 0;
-    $childrenAges = trim($_POST['children_ages'] ?? '');
-    $whyAdopt = trim($_POST['why_adopt'] ?? '');
-    $reference1Name = trim($_POST['reference1_name'] ?? '');
-    $reference1Phone = trim($_POST['reference1_phone'] ?? '');
-    $reference2Name = trim($_POST['reference2_name'] ?? '');
-    $reference2Phone = trim($_POST['reference2_phone'] ?? '');
-
-    if (empty($applicantName) || empty($email) || empty($phone) || empty($address) || 
-        empty($employment) || empty($homeType) || empty($whyAdopt)) {
-        $error = true;
-        $errorMsg = "Please fill in all required fields.";
-    } else {
-
-        $insertStmt = $conn->prepare("INSERT INTO adoptions (animal_id, applicant_name, email, phone, address, city, postal_code, employment, home_type, home_ownership, rental_permission, have_yard, other_pets_info, has_children, children_ages, adoption_reason, reference1_name, reference1_phone, reference2_name, reference2_phone, status, request_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Pending', NOW())");
-        
-        $insertStmt->bind_param("isssssssssisssssss", 
-            $animalId, $applicantName, $email, $phone, $address, $city, $postalCode, 
-            $employment, $homeType, $homeOwnership, $rentalPermission, $haveYard, 
-            $otherPets, $children, $childrenAges, $whyAdopt, $reference1Name, 
-            $reference1Phone, $reference2Name, $reference2Phone);
-        
-        if ($insertStmt->execute()) {
-            $submitted = true;
-        } else {
-            $error = true;
-            $errorMsg = "Failed to submit adoption request. Please try again.";
-        }
-        $insertStmt->close();
+    if (!isset($_SESSION['loggedIn']) || $_SESSION['loggedIn'] !== true) {
+        header("Location: login.php");
+        exit();
     }
+
+    $conn = new mysqli('localhost', 'marikina_user', 'marikina_password', 'marikina_db');
+    if ($conn->connect_error) {
+        throw new Exception("Database connection failed: " . $conn->connect_error);
+    }
+
+    $animalId = isset($_GET['animal_id']) ? intval($_GET['animal_id']) : 0;
+
+    if ($animalId <= 0) {
+        header("Location: adopt-animal.php");
+        exit();
+    }
+
+    $stmt = $conn->prepare("SELECT id, name, type, age, gender FROM animals WHERE id = ? AND status = 'Available for Adoption'");
+    if (!$stmt) {
+        throw new Exception("Prepare error: " . $conn->error);
+    }
+    
+    $stmt->bind_param("i", $animalId);
+    if (!$stmt->execute()) {
+        throw new Exception("Execute error: " . $stmt->error);
+    }
+    
+    $result = $stmt->get_result();
+
+    if ($result->num_rows === 0) {
+        $stmt->close();
+        $conn->close();
+        header("Location: adopt-animal.php");
+        exit();
+    }
+
+    $animal = $result->fetch_assoc();
+    $stmt->close();
+
+    $submitted = false;
+    $error = false;
+    $errorMsg = "";
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        try {
+            $applicantName = trim($_POST['applicant_name'] ?? '');
+            $email = trim($_POST['email'] ?? '');
+            $phone = trim($_POST['phone'] ?? '');
+            $address = trim($_POST['address'] ?? '');
+            $city = trim($_POST['city'] ?? '');
+            $postalCode = trim($_POST['postal_code'] ?? '');
+            $employment = trim($_POST['employment'] ?? '');
+            $homeType = trim($_POST['home_type'] ?? '');
+            $homeOwnership = trim($_POST['home_ownership'] ?? '');
+            $rentalPermission = isset($_POST['rental_permission']) ? 1 : 0;
+            $haveYard = isset($_POST['have_yard']) && $_POST['have_yard'] !== '' ? $_POST['have_yard'] : null;
+            $otherPets = trim($_POST['other_pets'] ?? '');
+            $children = isset($_POST['children']) ? 1 : 0;
+            $childrenAges = trim($_POST['children_ages'] ?? '');
+            $whyAdopt = trim($_POST['why_adopt'] ?? '');
+            $reference1Name = trim($_POST['reference1_name'] ?? '');
+            $reference1Phone = trim($_POST['reference1_phone'] ?? '');
+            $reference2Name = trim($_POST['reference2_name'] ?? '');
+            $reference2Phone = trim($_POST['reference2_phone'] ?? '');
+
+            if (empty($applicantName) || empty($email) || empty($phone) || empty($address) || 
+                empty($employment) || empty($homeType) || empty($whyAdopt)) {
+                throw new Exception("Please fill in all required fields.");
+            }
+
+            $animalName = $animal['name'];
+            $animalType = $animal['type'];
+            $sessionUserId = $_SESSION['user_id'] ?? null;
+            $insertStmt = $conn->prepare("INSERT INTO adoptions (user_id, animal_id, animal_name, animal_type, applicant_name, email, phone, address, city, postal_code, employment, home_type, home_ownership, rental_permission, have_yard, other_pets_info, has_children, children_ages, adoption_reason, reference1_name, reference1_phone, reference2_name, reference2_phone, status, request_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Pending', NOW())");
+            
+            if (!$insertStmt) {
+                throw new Exception("Database prepare error: " . $conn->error);
+            }
+
+            // Bind parameters with correct types (23 parameters total)
+            // user_id(i), animal_id(i), animal_name(s), animal_type(s), applicant_name(s), email(s), phone(s),
+            // address(s), city(s), postal_code(s), employment(s), home_type(s), home_ownership(s),
+            // rental_permission(i), have_yard(s), other_pets_info(s), has_children(i),
+            // children_ages(s), adoption_reason(s), reference1_name(s), reference1_phone(s),
+            // reference2_name(s), reference2_phone(s)
+            $bindResult = $insertStmt->bind_param(
+                "iisssssssssssississssss", 
+                $sessionUserId,
+                $animalId,
+                $animalName,
+                $animalType,
+                $applicantName, 
+                $email, 
+                $phone, 
+                $address, 
+                $city, 
+                $postalCode, 
+                $employment, 
+                $homeType, 
+                $homeOwnership, 
+                $rentalPermission, 
+                $haveYard, 
+                $otherPets, 
+                $children, 
+                $childrenAges, 
+                $whyAdopt, 
+                $reference1Name, 
+                $reference1Phone, 
+                $reference2Name, 
+                $reference2Phone
+            );
+            
+            if (!$bindResult) {
+                throw new Exception("Parameter binding error: " . $insertStmt->error);
+            }
+
+            if (!$insertStmt->execute()) {
+                throw new Exception("Database execute error: " . $insertStmt->error);
+            }
+
+            $submitted = true;
+            $insertStmt->close();
+
+            // Mark animal as Reserved so no duplicate requests can be submitted
+            $conn->query("UPDATE animals SET status = 'Reserved' WHERE id = $animalId");
+            
+        } catch (\Throwable $e) {
+            $error = true;
+            $errorMsg = "Error: " . $e->getMessage();
+            error_log("Adoption Request Error: " . $e->getMessage());
+        }
+    }
+
+    $conn->close();
+    $activePage = 'adopt';
+
+} catch (\Throwable $e) {
+    // Fallback error handling
+    error_log("Critical Error in adoption-request.php: " . $e->getMessage());
+    ob_end_clean();
+    http_response_code(500);
+    echo "<h1>Error</h1><p>" . htmlspecialchars($e->getMessage()) . "</p>";
+    exit();
 }
 
-$conn->close();
-$activePage = 'adopt';
+// End output buffering safely
+ob_end_clean();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -95,285 +173,11 @@ $activePage = 'adopt';
     <title>Adoption Application - Marikina A&W</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #f8fafc;
-            color: #2d3748;
-        }
-        
-        .main-content {
-            margin-left: 80px;
-            padding: 40px;
-        }
-        
-        .back-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            color: #2c7d4e;
-            text-decoration: none;
-            margin-bottom: 24px;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-        
-        .back-link:hover {
-            color: #1e5c38;
-        }
-        
-        .form-header {
-            background: linear-gradient(135deg, #2c7d4e 0%, #1e5c38 100%);
-            color: white;
-            padding: 40px;
-            border-radius: 12px;
-            margin-bottom: 40px;
-        }
-        
-        .form-header h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.2rem;
-            margin-bottom: 8px;
-        }
-        
-        .animal-info {
-            background: rgba(255,255,255,0.15);
-            padding: 16px;
-            border-radius: 8px;
-            margin-top: 20px;
-            backdrop-filter: blur(10px);
-        }
-        
-        .animal-info-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-            margin-top: 12px;
-        }
-        
-        .animal-info-item {
-            font-size: 0.95rem;
-        }
-        
-        .animal-info-label {
-            opacity: 0.9;
-            font-size: 0.85rem;
-        }
-        
-        .success-message {
-            background: #dcfce7;
-            color: #166534;
-            padding: 24px;
-            border-radius: 12px;
-            border-left: 4px solid #16a34a;
-            margin-bottom: 24px;
-        }
-        
-        .success-message h2 {
-            margin-bottom: 8px;
-        }
-        
-        .error-message {
-            background: #fee2e2;
-            color: #991b1b;
-            padding: 16px;
-            border-radius: 12px;
-            border-left: 4px solid #dc2626;
-            margin-bottom: 24px;
-        }
-        
-        .form-container {
-            background: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-        }
-        
-        .form-section {
-            margin-bottom: 32px;
-        }
-        
-        .form-section:last-child {
-            margin-bottom: 0;
-        }
-        
-        .section-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #1e5c38;
-            margin-bottom: 20px;
-            padding-bottom: 12px;
-            border-bottom: 2px solid #e2e8f0;
-        }
-        
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-        }
-        
-        .form-grid.full {
-            grid-template-columns: 1fr;
-        }
-        
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        label {
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #2d3748;
-            font-size: 0.95rem;
-        }
-        
-        .required {
-            color: #dc2626;
-        }
-        
-        input[type="text"],
-        input[type="email"],
-        input[type="tel"],
-        select,
-        textarea {
-            padding: 12px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.95rem;
-            transition: border-color 0.3s ease;
-        }
-        
-        input[type="text"]:focus,
-        input[type="email"]:focus,
-        input[type="tel"]:focus,
-        select:focus,
-        textarea:focus {
-            outline: none;
-            border-color: #2c7d4e;
-            box-shadow: 0 0 0 3px rgba(44, 125, 78, 0.1);
-        }
-        
-        textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-        
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 12px;
-        }
-        
-        input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-            accent-color: #2c7d4e;
-        }
-        
-        .checkbox-group label {
-            margin: 0;
-            cursor: pointer;
-            font-weight: 400;
-        }
-        
-        .radio-group {
-            display: flex;
-            gap: 20px;
-            margin-top: 8px;
-        }
-        
-        .radio-option {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        input[type="radio"] {
-            cursor: pointer;
-            accent-color: #2c7d4e;
-        }
-        
-        .form-actions {
-            display: flex;
-            gap: 16px;
-            margin-top: 32px;
-            padding-top: 24px;
-            border-top: 1px solid #e2e8f0;
-        }
-        
-        button {
-            padding: 14px 32px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1rem;
-        }
-        
-        .btn-submit {
-            background: #2c7d4e;
-            color: white;
-            flex: 1;
-        }
-        
-        .btn-submit:hover {
-            background: #1e5c38;
-        }
-        
-        .btn-cancel {
-            background: #e2e8f0;
-            color: #2d3748;
-        }
-        
-        .btn-cancel:hover {
-            background: #cbd5e1;
-        }
-        
-        .helper-text {
-            font-size: 0.85rem;
-            color: #4b5563;
-            margin-top: 4px;
-        }
-        
-        @media (max-width: 768px) {
-            .main-content {
-                margin-left: 0;
-                padding: 20px;
-            }
-            
-            .form-header {
-                padding: 24px;
-            }
-            
-            .form-header h1 {
-                font-size: 1.6rem;
-            }
-            
-            .animal-info-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .form-container {
-                padding: 20px;
-            }
-            
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .form-actions {
-                flex-direction: column;
-            }
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/variables.css">
+    <link rel="stylesheet" href="../assets/css/nav.css">
+    <link rel="stylesheet" href="../assets/css/admin.css">
+    <link rel="stylesheet" href="../assets/css/forms.css">
 </head>
 <body>
     <?php include 'nav-menu.php'; ?>
@@ -387,7 +191,7 @@ $activePage = 'adopt';
                 <p>Thank you for your adoption application for <strong><?php echo htmlspecialchars($animal['name']); ?></strong>. Our staff will review your application and contact you shortly. Please check your email for updates.</p>
             </div>
             <div style="text-align: center; margin-top: 32px;">
-                <a href="adopt-animal.php" style="color: #2c7d4e; text-decoration: none; font-weight: 600;">← Back to Animals</a>
+                <a href="adopt-animal.php" class="back-link" style="text-decoration: none;display: block; text-align:center; margin-top:20px;">← Back to Animals</a>
             </div>
         <?php else: ?>
             <div class="form-header">
