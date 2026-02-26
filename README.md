@@ -1,131 +1,235 @@
 # Marikina City Animal & Welfare Management System
 
+A web-based animal welfare management platform for Marikina City — handling animal records, adoption requests, vaccination scheduling, and incident reporting.
+
+---
+
 ## Table of Contents
 
 - [Project Description](#project-description)
-- [System Overview](#system-overview)
-- [Key Features](#key-features)
+- [Features](#features)
 - [Technology Stack](#technology-stack)
-- [System Requirements](#system-requirements)
-- [Installation & Setup](#installation--setup)
-- [Getting Started](#getting-started)
 - [Project Structure](#project-structure)
 - [Database Schema](#database-schema)
-- [Security Features](#security-features)
-- [Configuration](#configuration)
-- [Testing](#testing)
-- [Common Troubleshooting](#common-troubleshooting)
+- [Installation & Setup](#installation--setup)
+- [Running the App](#running-the-app)
+- [Default Credentials](#default-credentials)
+- [Security Notes](#security-notes)
 - [Development Notes](#development-notes)
-- [Support & Documentation](#support--documentation)
-- [Version Information](#version-information)
 
 ---
 
 ## Project Description
 
-The Marikina City Animal & Welfare Management System is a comprehensive web-based platform designed to streamline the management of animal welfare operations for the Marikina City government. This system centralizes critical functions including animal record management, adoption request processing, vaccination scheduling, incident reporting, and administrative reporting.
-
-The application serves as a unified solution to address operational challenges such as fragmented records management, delayed incident response, and data inaccuracy. By providing an organized database and intuitive interface, the system enables staff to efficiently manage animal welfare activities and maintain comprehensive records for compliance and decision-making purposes.
+The Marikina City Animal & Welfare Management System is a PHP/MySQL web application built as a 3rd-year capstone project. It provides a unified platform for managing animal shelter operations, processing adoption requests, tracking vaccinations, and reporting animal-related incidents.
 
 ---
 
-## System Overview
+## Features
 
-This is a three-tier web application built with PHP and MySQL, designed for use by veterinarians and administrative staff. The system provides secure authentication, role-based access control, and comprehensive data management capabilities for animal welfare operations.
+### User Authentication
+- Secure login and registration
+- Session-based authentication with bcrypt password hashing
+- HTTP-only session cookies with SameSite protection
+- Session regeneration on login to prevent fixation attacks
 
-**Current Status**: Production Ready | All Core Features Implemented | Fully Functional
-
----
-
-## Key Features
-
-### Authentication & Access Control
-- Secure user login with server-side authentication
-- User registration for veterinarians and staff
-- Session-based access control with HTTP-only cookies
-- Automatic session regeneration upon login for enhanced security
-- Password hashing using bcrypt (PASSWORD_DEFAULT)
+### Dashboard
+- Personalized welcome with quick-link cards (Report Incident, My Reports, Adopt Animal, Vaccination)
+- 3-column summary grid: My Reports · My Adoption Requests · Vaccination Schedule
+- Featured Animals carousel (animals available for adoption)
+- All sections scoped to the logged-in user
 
 ### Animal Management
-- Comprehensive animal record database with detailed information
-- Animal availability status tracking
-- Support for multiple animal types and demographics
-- Real-time animal listing and search capabilities
-- Individual animal detail pages with complete history
+- Full animal records with name, type, age, gender, status, description
+- Status lifecycle: `In Shelter` → `Available for Adoption` → `Reserved` → `Adopted`
+- `Reserved` status automatically set when an adoption request is submitted — prevents duplicate applications
 
-### Adoption Management System
-- Complete adoption request workflow and tracking
-- Multi-stage adoption approval process (Pending, Approved, Completed)
-- Applicant information collection and verification
-- Adoption request history and status monitoring
-- Employment verification for applicants
+### Adopt an Animal
+- Browse animals with live status badges: **Available** (green) / **Reserved** (orange) / **Adopted** (teal)
+- Disabled cards for Reserved/Adopted animals
+- Clicking "View Details" leads to the full adoption request form
 
-### Health & Vaccination Services
-- Vaccination record management for all animals
-- Vaccination schedule tracking and reminders
-- Vaccine type and date documentation
-- Integration with animal records
+### Adoption Request Form
+- Full applicant profile: personal info, address, employment, home type, other pets, children, references
+- On submit: saves request with `user_id`, sets animal status to `Reserved`
+- Success modal with reference ID → redirects to My Adoption Requests
 
-### Incident Management
-- Incident reporting and documentation system
-- Location-based incident tracking
-- Injury and incident description recording
-- Priority and status management
+### My Adoption Requests (`adoptions.php`)
+- Stat cards: Total / Pending / Approved / Completed
+- Table of all requests scoped to the logged-in user
+- Status badges: Pending / Approved / Rejected / Completed
 
-### Reporting & Analytics
-- System report generation capabilities
-- Event scheduling and calendar management
-- Statistical analysis of adoption trends
-- Administrative dashboard with key metrics
+### Vaccination Management
+- Log vaccinations per animal with vaccine type, schedule date, vet staff
+- Status tracking: Upcoming / Done / Overdue
 
-### Dashboard & Navigation
-- Centralized dashboard displaying user statistics
-- Quick-access navigation menu
-- Real-time adoption status counters
-- Recent activity feeds
-- Featured animals display
+### Incident Reporting (`incidents.php`)
+- Full incident form: date, time, location, barangay, animal details, victim info, severity, injury description
+- Severity levels: Low / Medium / High / Critical
+- On submit: success modal with Reference ID → redirects to My Reports
+
+### My Reports (`my-incidents.php`)
+- Stat cards: Total / Pending / In Progress / Resolved
+- Full incident history table for the logged-in user
+- **View** button opens an inline detail modal with all field data (no page redirect)
+
+### Reports & Schedule
+- System report generation
+- Event/appointment scheduling
 
 ---
 
 ## Technology Stack
 
-- **Backend**: PHP 7.4+
-- **Database**: MySQL 5.7+
-- **Frontend**: HTML5, CSS3
-- **Authentication**: Session-based with prepared statements
-- **Security**: SQL injection prevention, password hashing, HTTP-only cookies
+| Layer | Technology |
+|---|---|
+| Backend | PHP 8.3 |
+| Database | MySQL 8.x |
+| Frontend | HTML5, CSS3 (custom design system) |
+| Server | PHP built-in server (`php -S`) |
+| Auth | Session-based, prepared statements |
+
+### CSS Architecture
+All styles are extracted into separate files in `assets/css/`:
+
+| File | Scope |
+|---|---|
+| `variables.css` | CSS custom properties (colors, spacing, typography) |
+| `nav.css` | Sidebar navigation |
+| `admin.css` | Design system — page-header, stat-cards, tables, modals, badges |
+| `forms.css` | Form layout and input styles |
+| `adopt-animal.css` | Animal browse grid and card styles |
+| `animal-detail.css` | Animal detail page |
+| `auth.css` | Login / Register pages |
+| `index.css` | Public landing page |
 
 ---
 
-## System Requirements
+## Project Structure
 
-- PHP 7.4 or higher
-- MySQL 5.7 or higher
-- Web server (Apache, Nginx, or PHP built-in server)
-- 50 MB disk space minimum
-- Command-line access (for initial setup)
+```
+3rd Year Capstone/
+├── index.php                     # Root redirect → src/index.php
+├── README.md
+│
+├── src/                          # All application pages
+│   ├── session-handler.php       # Session config (called before session_start)
+│   ├── nav-menu.php              # Sidebar navigation (included on all pages)
+│   ├── page-template.php         # Shared page layout
+│   │
+│   ├── index.php                 # Public landing page
+│   ├── login.php                 # Authentication
+│   ├── register.php              # User registration
+│   ├── logout.php                # Session destroy
+│   │
+│   ├── dashboard.php             # Main user dashboard
+│   ├── animals.php               # Animal records management
+│   ├── animal-detail.php         # Single animal detail + adopt CTA
+│   ├── adopt-animal.php          # Browse animals grid (Available/Reserved/Adopted)
+│   ├── adoption-request.php      # Full adoption application form
+│   ├── adoptions.php             # My Adoption Requests (user-scoped)
+│   │
+│   ├── incidents.php             # Report an incident form
+│   ├── my-incidents.php          # My Reports — history + detail modal
+│   │
+│   ├── vaccinations.php          # Vaccination records
+│   ├── reports.php               # Reports module
+│   └── schedule.php              # Schedule/calendar module
+│
+├── assets/
+│   ├── css/                      # Modular CSS files (see CSS Architecture above)
+│   └── images/
+│       └── Lgo.png
+│
+└── sql/
+    ├── marikina_db.sql           # Full schema + seed data
+    ├── add-incidents-table.sql   # Incidents table migration
+    ├── adoption-application-schema.sql  # Extended adoptions table schema
+    └── update-animals.sql        # Animals table updates
+```
+
+---
+
+## Database Schema
+
+### `users`
+| Column | Type | Notes |
+|---|---|---|
+| id | INT PK | Auto increment |
+| username | VARCHAR(50) | Unique |
+| password | VARCHAR(255) | bcrypt hashed |
+| full_name | VARCHAR(100) | |
+| role | VARCHAR(50) | e.g. Veterinarian |
+| created_at | TIMESTAMP | |
+
+### `animals`
+| Column | Type | Notes |
+|---|---|---|
+| id | INT PK | |
+| name | VARCHAR(100) | |
+| type | VARCHAR(50) | Dog, Cat, etc. |
+| age | INT | Years |
+| gender | VARCHAR(20) | |
+| status | ENUM | `In Shelter`, `Available for Adoption`, `Reserved`, `Adopted`, `Rescued`, `Deceased` |
+| intake_date | TIMESTAMP | |
+| description | TEXT | |
+
+### `adoptions`
+| Column | Type | Notes |
+|---|---|---|
+| id | INT PK | |
+| user_id | INT | FK → users.id (nullable for legacy rows) |
+| animal_id | INT | FK → animals.id |
+| animal_name | VARCHAR | |
+| animal_type | VARCHAR | |
+| applicant_name | VARCHAR | |
+| email / phone / address | VARCHAR | |
+| employment, home_type, home_ownership | VARCHAR | |
+| rental_permission, have_yard | INT/VARCHAR | |
+| other_pets_info, has_children, children_ages | VARCHAR | |
+| adoption_reason | TEXT | |
+| reference1_name/phone, reference2_name/phone | VARCHAR | |
+| status | ENUM | `Pending`, `Approved`, `Rejected`, `Completed` |
+| request_date | TIMESTAMP | |
+
+### `incidents`
+| Column | Type | Notes |
+|---|---|---|
+| id | INT PK | |
+| user_id | INT | FK → users.id |
+| incident_date / incident_time | DATE / TIME | |
+| location, barangay | VARCHAR | |
+| animal_type, animal_color, animal_size | VARCHAR | |
+| animal_distinguishing_features | TEXT | |
+| victim_name, victim_age, victim_contact | VARCHAR | |
+| injury_description | TEXT | |
+| severity_level | ENUM | `Low`, `Medium`, `High`, `Critical` |
+| status | ENUM | `New`, `Under Review`, `Resolved`, `Closed` |
+| treatment_received, remarks | TEXT | |
+| created_at / updated_at | TIMESTAMP | |
+
+### `vaccinations`
+| Column | Type | Notes |
+|---|---|---|
+| id | INT PK | |
+| animal_name | VARCHAR | |
+| vaccine_type | VARCHAR | |
+| schedule_date | DATETIME | |
+| vet_staff | VARCHAR | |
+| status | ENUM | `Upcoming`, `Done`, `Overdue` |
 
 ---
 
 ## Installation & Setup
 
-### Prerequisites
-
-Before installation, ensure you have:
-- MySQL server running and accessible
-- PHP installed with command-line access
-- Git (for cloning the repository)
-
-### Step 1: Clone or Download Repository
+### 1. Clone the repository
 
 ```bash
-git clone <repository-url>
-cd "3rd Year Capstone"
+git clone https://github.com/kaneshirojangg/Digital-Animal-Welfare-System-for-Marikina-City-Capstone-for-Third-Year-.git
+cd "Digital-Animal-Welfare-System-for-Marikina-City-Capstone-for-Third-Year-"
 ```
 
-### Step 2: Set Up Database
-
-Create the database and user account:
+### 2. Create the database and user
 
 ```bash
 sudo mysql -u root -e "
@@ -136,270 +240,88 @@ sudo mysql -u root -e "
 "
 ```
 
-Import the database schema and seed data:
+### 3. Import the schema
 
 ```bash
 mysql -u marikina_user -p'marikina_password' marikina_db < sql/marikina_db.sql
 ```
 
-### Step 3: Start the Application
-
-Using PHP built-in server:
+### 4. Apply the adoption application schema (extended columns)
 
 ```bash
-cd /path/to/project
-php -S localhost:8000
+mysql -u marikina_user -p'marikina_password' marikina_db < sql/adoption-application-schema.sql
 ```
 
-The application will be available at: `http://localhost:8000`
+### 5. Add the `user_id` column to adoptions (if not already present)
 
----
-
-## Getting Started
-
-### Initial Login
-
-1. Open your web browser and navigate to `http://localhost:8000`
-2. Click the "Log In" button to access the login page
-3. Use the following test credentials:
-   - **Username**: `test`
-   - **Password**: `password`
-
-### Navigating the System
-
-After logging in, you will be directed to the main dashboard. The left navigation menu provides access to:
-
-- **Dashboard**: Overview of adoption statistics and recent activity
-- **Animals**: View and manage all animals in the system
-- **Adoptions**: Process and track adoption requests
-- **Vaccinations**: Manage vaccination records and schedules
-- **Incidents**: Report and review incident documentation
-- **Reports**: Generate system reports and analytics
-- **Schedule**: View and manage appointments and events
-
----
-
-## Project Structure
-
+```bash
+mysql -u marikina_user -p'marikina_password' marikina_db -e \
+  "ALTER TABLE adoptions ADD COLUMN IF NOT EXISTS user_id INT DEFAULT NULL AFTER id;"
 ```
-3rd Year Capstone/
-├── index.php                    # Root entry point (redirects to src/index.php)
-├── startup.sh                   # Startup script for system verification
-├── README.md                    # This file
-│
-├── src/                         # Main application files
-│   ├── index.php               # Public landing page
-│   ├── login.php               # User authentication
-│   ├── register.php            # User registration
-│   ├── logout.php              # Session termination
-│   ├── session-handler.php     # Session configuration
-│   │
-│   ├── dashboard.php           # Main dashboard hub
-│   ├── animals.php             # Animal management
-│   ├── animal-detail.php       # Individual animal details
-│   ├── adopt-animal.php        # Animal adoption browsing
-│   ├── adoption-request.php    # Adoption application form
-│   ├── adoptions.php           # Adoption request management
-│   ├── vaccinations.php        # Vaccination record management
-│   ├── incidents.php           # Incident reporting system
-│   ├── reports.php             # Reporting module
-│   ├── schedule.php            # Event scheduling
-│   │
-│   ├── nav-menu.php            # Navigation component
-│   └── page-template.php       # Page layout template
-│
-├── sql/                         # Database files
-│   ├── marikina_db.sql         # Database schema and seed data
-│   ├── add-incidents-table.sql # Additional incident table schema
-│   └── update-animals.sql      # Animal table updates
-│
-├── assets/                      # Static files
-│   ├── css/
-│   │   └── dashboard-ui.css    # Application styling
-│   └── images/                 # Image assets
-│
-└── docs/                        # Documentation
-    ├── 00-QUICK-REFERENCE.md   # Quick reference guide
-    ├── 01-index.md             # Landing page documentation
-    ├── 02-login.md             # Authentication documentation
-    ├── 03-register.md          # Registration documentation
-    ├── 04-dashboard.md         # Dashboard documentation
-    ├── 05-REMAINING-MODULES.md # Module documentation
-    └── DEBUGGING-GUIDE.md      # Troubleshooting guide
+
+### 6. Add `Reserved` to the animals status enum (if not already present)
+
+```bash
+mysql -u marikina_user -p'marikina_password' marikina_db -e \
+  "ALTER TABLE animals MODIFY status ENUM('In Shelter','Available for Adoption','Reserved','Adopted','Rescued','Deceased') DEFAULT 'In Shelter';"
 ```
 
 ---
 
-## Database Schema
+## Running the App
 
-### Core Tables
+```bash
+php -S localhost:8000 -t src
+```
 
-**users**
-- Stores user account information and credentials
-- Fields: id, username, password (hashed), full_name, role
-- Primary authentication source
+Open: [http://localhost:8000](http://localhost:8000)
 
-**animals**
-- Contains all animal records
-- Fields: id, name, type, age, gender, status, date_entered, description
-- Used throughout adoption and health management
-
-**adoptions**
-- Tracks adoption applications and requests
-- Fields: id, animal_id, applicant_name, email, phone, status, request_date
-- Links animals to applicant information
-
-**vaccinations**
-- Records vaccination history and schedules
-- Fields: id, animal_name, vaccine_type, schedule_date, date_given
-- Manages health records for animals
-
-**incidents**
-- Documents animal and facility incidents
-- Fields: id, user_id, incident_date, location, injury_description, status
-- Provides incident tracking and response
+> **Note:** Use `-t src` so the server root is the `src/` directory.
 
 ---
 
-## Security Features
+## Default Credentials
 
-- **Query Parameterization**: All database queries use prepared statements to prevent SQL injection attacks
-- **Password Security**: User passwords are hashed using PHP's PASSWORD_DEFAULT algorithm (bcrypt)
-- **Session Management**: HTTP-only cookies prevent JavaScript access to session tokens
-- **Session Regeneration**: New session IDs generated on login to prevent session fixation attacks
-- **SameSite Cookie Policy**: Cookies configured with Lax SameSite policy for CSRF protection
-- **Authentication Checks**: All protected pages verify session status before content display
-- **Input Validation**: Server-side validation of all form submissions
+Register a new account via the Register page, or use any account already seeded in `marikina_db.sql`.
 
----
-
-## Configuration
-
-### Database Credentials
-
-Default connection parameters (found in application files):
+Database credentials (used in PHP files):
 
 ```
-Host: localhost
-Database: marikina_db
-User: marikina_user
+Host:     localhost
+DB:       marikina_db
+User:     marikina_user
 Password: marikina_password
 ```
 
-**Note**: These credentials should be modified in production environments.
-
-### Color Scheme
-
-The application uses a cohesive color palette:
-
-| Color | Hex Value | Usage |
-|-------|-----------|-------|
-| Primary Green | #2c7d4e | Headers, buttons, brand |
-| Dark Green | #1e5c38 | Active states |
-| Accent Orange | #e67e22 | Highlights, links |
-| Danger Red | #dc2626 | Errors, warnings |
-| Success Green | #10b981 | Confirmations |
-| Light Background | #f8fafc | Page backgrounds |
-| White | #ffffff | Cards, panels |
+> Change these in production.
 
 ---
 
-## Testing
+## Security Notes
 
-### Verification Steps
-
-After installation, follow these steps to verify system functionality:
-
-1. Navigate to `http://localhost:8000`
-2. Review the landing page (public content)
-3. Click "Log In" and proceed to login page
-4. Enter test credentials (username: `test`, password: `password`)
-5. Verify successful login and dashboard display
-6. Test navigation through all menu sections
-7. Verify session persistence across different pages
-8. Test logout functionality
-
-### Known Test Cases
-
-- User authentication with valid credentials
-- Rejection of invalid login attempts
-- Session persistence across page navigation
-- Access denial for non-authenticated users
-- Proper error messages for database issues
-
----
-
-## Common Troubleshooting
-
-### Database Connection Errors
-
-**Problem**: "Connection failed" message on login page
-
-**Solution**:
-1. Verify MySQL server is running: `mysql -u root`
-2. Confirm credentials are correct: `mysql -u marikina_user -p`
-3. Check database exists: `SHOW DATABASES;`
-4. Verify user permissions: `GRANT ALL PRIVILEGES...`
-
-### SQL File Import Errors
-
-**Problem**: "Access denied" when importing SQL file
-
-**Solution**:
-```bash
-mysql -u marikina_user -p'marikina_password' marikina_db < sql/marikina_db.sql
-```
-
-### Session Timeout Issues
-
-**Problem**: Users logged out unexpectedly when navigating between pages
-
-**Solution**: Verify `session-handler.php` is included on all protected pages and session cookies are HTTP-only enabled.
-
-### File Not Found Errors
-
-**Problem**: 404 errors when accessing pages
-
-**Solution**: Verify correct relative paths in redirects and includes. Ensure all PHP files are in the `src/` directory.
+- All DB queries use prepared statements (`mysqli::prepare`)
+- Passwords hashed with `PASSWORD_DEFAULT` (bcrypt)
+- Session cookies: `httponly = true`, `samesite = Lax`
+- Session ID regenerated on login (`session_regenerate_id`)
+- User-scoped queries on adoption/incident data (always filtered by `user_id`)
 
 ---
 
 ## Development Notes
 
-### Adding New Modules
+### Key Conventions
+- Every protected page starts with `include 'session-handler.php'; session_start();` followed by a session check
+- All DB connections use `$conn = new mysqli('localhost', 'marikina_user', 'marikina_password', 'marikina_db')`
+- CSS class naming: `page-header`, `stats-grid`, `stat-card [primary|info|warning|success]`, `big-number`, `table-container`, `status-badge status-[name]`, `empty-state`
+- The `main-content` div accounts for the fixed 280px sidebar via `margin-left`
 
-When adding new features or modules:
+### Adding a New Page
+1. Create `src/your-page.php`
+2. Start with `include 'session-handler.php'; session_start();` + session guard
+3. Set `$activePage = 'your-page';` (used by nav-menu.php to highlight active link)
+4. Add nav item in `nav-menu.php`
+5. Link CSS from `../assets/css/`
 
-1. Create PHP file in `src/` directory
-2. Include `session-handler.php` and verify session status
-3. Use prepared statements for all database queries
-4. Follow existing code structure and naming conventions
-5. Add documentation to `docs/` folder
-6. Test thoroughly with various user scenarios
-
-### Code Standards
-
-- Use prepared statements exclusively for database operations
-- Implement session checks on all protected pages
-- Apply consistent naming conventions (snake_case for variables)
-- Include meaningful comments for complex logic
-- Avoid direct SQL string concatenation
-
-### Documentation
-
-Each module should have a corresponding documentation file in the `docs/` folder describing:
-- Purpose and functionality
-- Database tables accessed
-- User roles with access
-- Common usage scenarios
-- Integration points with other modules
 
 ---
 
-## Support & Documentation
-
-Detailed documentation for individual modules is provided in the `docs/` folder:
-
-- [Landing Page](docs/01-index.md)
-- [Authentication](docs/02-login.md)
-- [Registration](docs/03-register.md)

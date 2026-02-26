@@ -1,0 +1,290 @@
+/* Animal Detail Page Styles */
+
+.main-content {
+  padding: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+/* Navigation */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 32px;
+  color: var(--text-light);
+  text-decoration: none;
+  font-weight: var(--font-weight-medium);
+  font-size: 0.95rem;
+  transition: color 0.2s ease;
+}
+
+.back-link:hover {
+  color: var(--text-color);
+}
+
+/* Hero Section */
+.animal-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: start;
+  margin-bottom: 48px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid var(--border);
+}
+
+.animal-hero-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 1;
+  font-size: 6rem;
+  color: white;
+  background: linear-gradient(135deg, var(--btn-primary) 0%, var(--btn-primary-hover) 100%);
+  border-radius: 8px;
+}
+
+.animal-hero-content h1 {
+  font-size: 2.5rem;
+  font-weight: var(--font-weight-bold);
+  margin-bottom: 24px;
+  line-height: 1.2;
+  color: var(--text-color);
+}
+
+/* Hero Details */
+.hero-details {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.hero-detail {
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.hero-detail-label {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-light);
+  margin-bottom: 4px;
+}
+
+.hero-detail-value {
+  font-size: 1.1rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-color);
+}
+
+/* Main Content */
+.content-wrapper {
+  display: block;
+  width: 100%;
+}
+
+.main-info {
+  background: transparent;
+  padding: 0;
+  box-shadow: none;
+}
+
+/* Info Sections */
+.info-section {
+  margin-bottom: 48px;
+}
+
+.info-section:last-child {
+  margin-bottom: 0;
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--text-color);
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.description-text {
+  font-size: 1rem;
+  color: var(--text-light);
+  line-height: 1.8;
+}
+
+/* Info Grid */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 32px;
+}
+
+.info-item {
+  padding: 0;
+  background: transparent;
+  border: none;
+}
+
+.info-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-light);
+  margin-bottom: 8px;
+}
+
+.info-value {
+  font-size: 1.1rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-color);
+}
+
+/* Vaccinations */
+.vaccinations-list {
+  list-style: none;
+}
+
+.vaccination-item {
+  padding: 16px;
+  margin-bottom: 12px;
+  background-color: #f9fafb;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.vaccination-item:last-child {
+  margin-bottom: 0;
+}
+
+.vacc-name {
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-color);
+  margin-bottom: 6px;
+}
+
+.vacc-detail {
+  font-size: 0.85rem;
+  color: var(--text-light);
+}
+
+/* Adoption Section */
+.adoption-cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  margin-top: 48px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+}
+
+.sidebar-card {
+  padding: 32px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: var(--shadow-sm);
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 8px 0;
+  background: transparent;
+  color: var(--success);
+  font-size: 0.85rem;
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.adopt-cta {
+  margin-top: 24px;
+}
+
+.adopt-btn {
+  width: 100%;
+  margin-top: 24px;
+  padding: 16px 24px;
+  background-color: var(--btn-primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.adopt-btn:hover {
+  background-color: var(--btn-primary-hover);
+  box-shadow: 0 4px 12px rgba(142, 207, 201, 0.2);
+}
+
+.adopt-btn:active {
+  transform: scale(0.98);
+}
+
+.adoption-info {
+  margin-top: 20px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  font-size: 0.9rem;
+  color: var(--text-light);
+  line-height: 1.6;
+}
+
+.adoption-info strong {
+  color: var(--text-color);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .main-content {
+    margin-left: 180px;
+    padding: 32px 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+    padding: 24px 16px;
+  }
+
+  .animal-hero {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+  }
+
+  .animal-hero-icon {
+    font-size: 4rem;
+  }
+
+  .animal-hero-content h1 {
+    font-size: 1.8rem;
+  }
+
+  .hero-details {
+    grid-template-columns: 1fr;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .adoption-cards {
+    margin-top: 32px;
+    padding-top: 24px;
+  }
+}

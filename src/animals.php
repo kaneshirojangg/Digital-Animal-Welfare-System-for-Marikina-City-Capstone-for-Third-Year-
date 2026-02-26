@@ -48,111 +48,12 @@ $result = $conn->query("SELECT id, name, type, age, gender, status, intake_date 
 		<meta charset="UTF-8">
 		<title>Animals - Marikina A&W</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-		<style>
-body {
-  font-family: 'Inter', sans-serif;
-  background: #f8fafc;
-  margin: 0;
-  margin-left: 280px;
-}
-
-.topbar {
-  background: #2c7d4e;
-  color: white;
-  padding: 15px 30px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.logo h1 { margin: 0; }
-
-.exit-btn {
-  background: #dc2626;
-  color: white;
-  border: none;
-  padding: 10px 24px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.content {
-  max-width: 1100px;
-  margin: 40px auto;
-  padding: 20px;
-}
-
-h1 {
-  color: #2c7d4e;
-  text-align: center;
-  margin-bottom: 10px;
-}
-
-/* ✅ CENTERED SUBTITLE */
-.subtitle {
-  text-align: center;
-  max-width: 700px;
-  margin: 0 auto 30px auto;
-  color: #4b5563;
-  line-height: 1.6;
-}
-
-.add-btn {
-  display: block;
-  margin: 0 auto 30px;
-  padding: 16px 40px;
-  font-size: 1.1rem;
-  background: #2c7d4e;
-  color: white;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-}
-
-.add-form {
-  background: white;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  margin-bottom: 40px;
-  display: none;
-}
-
-.add-form.show { display: block; }
-
-input, select, textarea {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 16px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-}
-
-button:hover { background: #1e5c38; }
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: white;
-  border-radius: 12px;
-  overflow: hidden;
-}
-
-th {
-  background: #2c7d4e;
-  color: white;
-  padding: 14px;
-}
-
-td {
-  padding: 14px;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-tr:hover { background: #f1f5f9; }
-</style>
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+		<link rel="stylesheet" href="../assets/css/variables.css">
+		<link rel="stylesheet" href="../assets/css/nav.css">
+		<link rel="stylesheet" href="../assets/css/admin.css">
 </head>
 
 <body>

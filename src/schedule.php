@@ -54,9 +54,9 @@ $result = $conn->query("
 ");
 
 while ($row = $result->fetch_assoc()) {
-	$color = '#2c7d4e'; 
+	$color = '#8ECFC9'; 
 
-	if ($row['status'] == 'Done') $color = '#065f46';
+	if ($row['status'] == 'Done') $color = 'var(--success)';
 	if ($row['status'] == 'Cancelled') $color = '#dc2626';
 	if (strtotime($row['schedule_date']) < time() && $row['status'] != 'Done' && $row['status'] != 'Cancelled') $color = '#f59e0b'; 
 
@@ -85,209 +85,13 @@ $conn->close();
   <!-- FullCalendar CSS & JS -->
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
-
-  <style>
-    :root {
-      --primary: #2c7d4e;
-      --primary-dark: #1e5c38;
-      --text: #2d3748;
-      --text-light: #4b5563;
-      --bg: #f8fafc;
-      --border: #e2e8f0;
-    }
-
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      margin-left: 280px;
-      min-height: 100vh;
-    }
-
-    .main-content {
-      max-width: 1300px;
-      margin: 0 auto;
-      padding: 40px 24px;
-    }
-
-    .page-header {
-      margin-bottom: 40px;
-    }
-
-    .page-header h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 2.4rem;
-      color: var(--primary-dark);
-      margin-bottom: 8px;
-    }
-
-    .page-header p {
-      color: var(--text-light);
-      font-size: 1.05rem;
-    }
-
-    .action-bar {
-      margin: 24px 0;
-      display: flex;
-      gap: 12px;
-      justify-content: flex-end;
-      flex-wrap: wrap;
-    }
-
-    .btn {
-      background: var(--primary);
-      color: white;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .btn:hover {
-      background: var(--primary-dark);
-      box-shadow: 0 4px 12px rgba(44, 125, 78, 0.2);
-    }
-
-    .message {
-      padding: 14px 18px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      font-weight: 500;
-    }
-
-    .message.success {
-      background: #d1fae5;
-      color: #065f46;
-      border-left: 4px solid #10b981;
-    }
-
-    .message.error {
-      background: #fee2e2;
-      color: #991b1b;
-      border-left: 4px solid #dc2626;
-    }
-
-    .calendar-container {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      margin-bottom: 40px;
-    }
-
-    #calendar {
-      font-family: 'Inter', sans-serif;
-    }
-
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      justify-content: center;
-      align-items: center;
-      z-index: 2000;
-    }
-
-    .modal-content {
-      background: white;
-      padding: 30px;
-      border-radius: 12px;
-      max-width: 500px;
-      width: 90%;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    }
-
-    .modal-content h2 {
-      color: var(--primary-dark);
-      margin-bottom: 20px;
-      font-family: 'Playfair Display', serif;
-      font-size: 1.6rem;
-    }
-
-    .form-group {
-      margin-bottom: 16px;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 4px;
-      font-weight: 600;
-      color: var(--text);
-      font-size: 0.9rem;
-    }
-
-    input, select, textarea {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font-family: 'Inter', sans-serif;
-      font-size: 0.95rem;
-    }
-
-    input:focus, select:focus, textarea:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(44, 125, 78, 0.1);
-    }
-
-    textarea {
-      resize: vertical;
-      min-height: 80px;
-    }
-
-    .modal-buttons {
-      display: flex;
-      gap: 12px;
-      margin-top: 24px;
-    }
-
-    .modal-buttons button {
-      flex: 1;
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .modal-buttons .btn-submit {
-      background: var(--primary);
-      color: white;
-    }
-
-    .modal-buttons .btn-submit:hover {
-      background: var(--primary-dark);
-    }
-
-    .modal-buttons .btn-cancel {
-      background: #e5e7eb;
-      color: var(--text);
-    }
-
-    .modal-buttons .btn-cancel:hover {
-      background: #d1d5db;
-    }
-
-    @media (max-width: 768px) {
-      body { margin-left: 0; }
-      .main-content { padding: 20px; }
-      .page-header h1 { font-size: 1.8rem; }
-      .action-bar { justify-content: center; }
-    }
-  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/variables.css">
+  <link rel="stylesheet" href="../assets/css/nav.css">
+  <link rel="stylesheet" href="../assets/css/admin.css">
+  <link rel="stylesheet" href="../assets/css/forms.css">
 </head>
 <body>
 

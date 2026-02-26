@@ -1,0 +1,678 @@
+/* ============================================================================
+   FORMS.CSS - Form Pages Styles
+   Covers: adoption-request.php, incidents.php, vaccinations.php, schedule.php, my-incidents.php
+   Last Updated: 2024
+   ============================================================================ */
+
+/* ============================================================================
+   BASE LAYOUT & STRUCTURE
+   ============================================================================ */
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: var(--bg-main);
+  color: var(--text-color);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+.main-content {
+  margin-left: 80px;
+  padding: 40px;
+  max-width: 1200px;
+  margin-right: auto;
+}
+
+/* ============================================================================
+   NAVIGATION & BACK LINKS
+   ============================================================================ */
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--btn-primary);
+  text-decoration: none;
+  margin-bottom: 24px;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.back-link:hover {
+  color: var(--btn-highlight);
+}
+
+/* ============================================================================
+   PAGE HEADERS & TITLES
+   ============================================================================ */
+
+.form-header {
+  background: linear-gradient(135deg, var(--btn-primary) 0%, #7AB9B3 100%);
+  color: white;
+  padding: 40px;
+  border-radius: 12px;
+  margin-bottom: 40px;
+}
+
+.form-header h1,
+.page-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.2rem;
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.form-header p,
+.page-subtitle {
+  font-size: 1rem;
+  opacity: 0.95;
+  font-weight: 400;
+  color: inherit;
+}
+
+.page-title {
+  color: #7AB9B3;
+  font-size: 2.4rem;
+  margin-bottom: 12px;
+}
+
+.page-subtitle {
+  color: var(--text-light);
+  font-size: 1rem;
+  margin-bottom: 30px;
+}
+
+/* ============================================================================
+   ANIMAL INFORMATION (Adoption Request Specific)
+   ============================================================================ */
+
+.animal-info {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 16px;
+  border-radius: 8px;
+  margin-top: 20px;
+  backdrop-filter: blur(10px);
+}
+
+.animal-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.animal-info-item {
+  font-size: 0.95rem;
+}
+
+.animal-info-label {
+  opacity: 0.9;
+  font-size: 0.85rem;
+}
+
+/* ============================================================================
+   ALERTS & MESSAGES
+   ============================================================================ */
+
+.alert,
+.success-message,
+.error-message {
+  padding: 16px 20px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  font-weight: 500;
+  border-left: 4px solid;
+}
+
+.alert-success,
+.success-message {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--success);
+  border-left-color: var(--success);
+}
+
+.alert-error,
+.error-message {
+  background: rgba(220, 38, 38, 0.1);
+  color: var(--text-color);
+  border-left-color: var(--danger);
+}
+
+.success-message h2 {
+  margin-bottom: 8px;
+  color: var(--success);
+}
+
+/* ============================================================================
+   FORM CONTAINER & SECTIONS
+   ============================================================================ */
+
+.form-container {
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.form-section {
+  margin-bottom: 32px;
+}
+
+.form-section:last-child {
+  margin-bottom: 0;
+}
+
+.form-section-title,
+.section-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--btn-primary);
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--border);
+}
+
+/* ============================================================================
+   FORM GRID LAYOUTS
+   ============================================================================ */
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.form-grid.full,
+.form-grid.single {
+  grid-template-columns: 1fr;
+}
+
+.form-grid.three {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* ============================================================================
+   FORM GROUPS & LABELS
+   ============================================================================ */
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--text-color);
+  font-size: 0.95rem;
+}
+
+.required {
+  color: var(--danger);
+  margin-left: 2px;
+}
+
+.helper-text {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  margin-top: 4px;
+}
+
+/* ============================================================================
+   FORM INPUT STYLES
+   ============================================================================ */
+
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="date"],
+input[type="time"],
+input[type="number"],
+select,
+textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  background: white;
+  color: var(--text-color);
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="tel"]:focus,
+input[type="date"]:focus,
+input[type="time"]:focus,
+input[type="number"]:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--btn-primary);
+  box-shadow: 0 0 0 3px rgba(142, 207, 201, 0.2);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-light);
+  opacity: 0.6;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+select {
+  cursor: pointer;
+  padding: 12px 14px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%234b5563' d='M1 4l5 4 5-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+  appearance: none;
+}
+
+/* ============================================================================
+   CHECKBOX & RADIO INPUTS
+   ============================================================================ */
+
+.checkbox-group,
+.radio-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.radio-group {
+  display: flex;
+  gap: 20px;
+  margin-top: 8px;
+}
+
+.checkbox-group label,
+.radio-option label {
+  margin: 0;
+  cursor: pointer;
+  font-weight: 400;
+  font-size: 0.95rem;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: var(--btn-primary);
+  flex-shrink: 0;
+}
+
+/* ============================================================================
+   BUTTONS & ACTIONS
+   ============================================================================ */
+
+.form-actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+button,
+.btn,
+.submit-btn,
+.btn-submit {
+  padding: 14px 32px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+.submit-btn,
+.btn-submit,
+button[type="submit"] {
+  background: var(--btn-primary);
+  color: white;
+  flex: 1;
+  width: 100%;
+}
+
+.submit-btn:hover,
+.btn-submit:hover,
+button[type="submit"]:hover {
+  background: var(--btn-highlight);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(240, 151, 151, 0.25);
+}
+
+.btn-cancel,
+button[type="reset"],
+button.secondary {
+  background: var(--card-bg);
+  color: var(--text-color);
+  border: 1px solid var(--border);
+}
+
+.btn-cancel:hover,
+button[type="reset"]:hover,
+button.secondary:hover {
+  background: rgba(142, 207, 201, 0.1);
+  border-color: var(--btn-primary);
+}
+
+.btn-cancel:disabled,
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ============================================================================
+   DATA DISPLAY & TABLES (for listing pages)
+   ============================================================================ */
+
+.incidents-list,
+.records-list {
+  margin-top: 40px;
+}
+
+.incidents-list h2,
+.records-list h2 {
+  font-size: 1.3rem;
+  margin-bottom: 20px;
+  color: var(--btn-primary);
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+thead {
+  background: rgba(142, 207, 201, 0.1);
+  border-bottom: 2px solid var(--border);
+}
+
+th {
+  padding: 16px;
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-color);
+  font-size: 0.95rem;
+}
+
+td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+
+tr:hover {
+  background: rgba(142, 207, 201, 0.05);
+}
+
+/* Status badges */
+.badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.badge-success {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--success);
+}
+
+.badge-warning {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+}
+
+.badge-danger {
+  background: rgba(220, 38, 38, 0.15);
+  color: var(--danger);
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN
+   ============================================================================ */
+
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+    padding: 20px;
+  }
+
+  .form-header {
+    padding: 24px;
+  }
+
+  .form-header h1,
+  .page-title {
+    font-size: 1.6rem;
+  }
+
+  .animal-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-container {
+    padding: 20px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-grid.three {
+    grid-template-columns: 1fr;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .submit-btn,
+  .btn-submit,
+  button[type="submit"],
+  .btn-cancel,
+  button[type="reset"] {
+    width: 100%;
+  }
+
+  th,
+  td {
+    padding: 12px;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content {
+    padding: 16px;
+  }
+
+  .form-header {
+    padding: 20px;
+  }
+
+  .form-header h1 {
+    font-size: 1.4rem;
+  }
+
+  .form-section-title,
+  .section-title {
+    font-size: 1rem;
+  }
+
+  .form-group label {
+    font-size: 0.9rem;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="date"],
+  input[type="time"],
+  select,
+  textarea {
+    padding: 10px 12px;
+    font-size: 16px;
+  }
+
+  button,
+  .submit-btn,
+  .btn-submit,
+  .btn-cancel {
+    padding: 12px 24px;
+    font-size: 0.9rem;
+  }
+
+  table {
+    font-size: 0.8rem;
+  }
+}
+
+/* ============================================================================
+   ACCESSIBILITY & PRINT
+   ============================================================================ */
+
+@media print {
+  body {
+    background: white;
+    margin-left: 0;
+  }
+
+  .form-container,
+  .form-header {
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+
+  button,
+  .form-actions {
+    display: none;
+  }
+}
+
+/* Focus visible for keyboard navigation */
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+button:focus-visible,
+.btn:focus-visible {
+  outline: 2px solid var(--btn-primary);
+  outline-offset: 2px;
+}
+
+/* ============================================================================
+   VACCINATION & INFO BOXES
+   ============================================================================ */
+
+.info-box {
+  background: rgba(142, 207, 201, 0.1);
+  border: 1px solid rgba(142, 207, 201, 0.3);
+  padding: 16px 20px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  color: var(--text-color);
+  font-weight: 500;
+}
+
+.vaccine-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+.vaccine-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.vaccine-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  border-color: var(--btn-primary);
+}
+
+.vaccine-card h3 {
+  font-size: 1.1rem;
+  color: var(--text-color);
+  margin: 0 0 16px 0;
+  font-weight: 700;
+}
+
+.vaccine-info {
+  margin-bottom: 16px;
+}
+
+.vaccine-info label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text-light);
+  font-weight: 600;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.vaccine-info p {
+  font-size: 0.95rem;
+  color: var(--text-color);
+  margin: 0;
+}
+
+/* ============================================================================
+   STATUS BADGES (Vaccination specific)
+   ============================================================================ */
+
+.status-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.status-done,
+.status-completed {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--success);
+}
+
+.status-scheduled,
+.status-pending {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--warning);
+}
+
+.status-cancelled {
+  background: rgba(220, 38, 38, 0.15);
+  color: var(--danger);
+}
