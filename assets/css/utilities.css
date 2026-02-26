@@ -1,0 +1,55 @@
+/* ============================================================================
+   COLOR UTILITY CLASSES
+   ============================================================================ */
+
+.text-primary {
+  color: var(--btn-primary);
+}
+
+.text-success {
+  color: var(--success);
+}
+
+.text-warning {
+  color: var(--warning);
+}
+
+.text-danger {
+  color: var(--danger);
+}
+
+.text-light {
+  color: var(--text-light);
+}
+
+/* ============================================================================
+   ACCESSIBILITY
+   ============================================================================ */
+
+/* Focus visible for keyboard navigation */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--btn-primary);
+  outline-offset: 2px;
+}
+
+/* ============================================================================
+   PRINT
+   ============================================================================ */
+
+@media print {
+  .sidebar,
+  .btn,
+  .action-buttons,
+  .filter-form,
+  .pagination {
+    display: none;
+  }
+
+  table {
+    border: 1px solid #ccc;
+  }
+}

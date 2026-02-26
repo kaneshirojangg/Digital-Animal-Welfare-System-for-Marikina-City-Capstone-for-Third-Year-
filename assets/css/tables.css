@@ -1,0 +1,56 @@
+/* ============================================================================
+   TABLES & DATA DISPLAY
+   ============================================================================ */
+
+.table-container,
+.data-container {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 32px;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+thead {
+  background: rgba(142, 207, 201, 0.08);
+  border-bottom: 2px solid var(--border);
+}
+
+thead th {
+  padding: 16px;
+  text-align: left;
+  font-weight: 700;
+  color: var(--text-color);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-family: 'Poppins', sans-serif;
+}
+
+tbody td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-color);
+}
+
+tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+tbody tr:hover {
+  background: rgba(142, 207, 201, 0.05);
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}

@@ -1,0 +1,213 @@
+/* ============================================================================
+   DASHBOARD GRID LAYOUT
+   ============================================================================ */
+
+/* 3-column grid for My Reports | Adoption Requests | Vaccinations */
+.dashboard-3col-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+/* ============================================================================
+   RECENT ITEMS LIST
+   ============================================================================ */
+
+.recent-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 16px 0;
+}
+
+.recent-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.recent-item:last-child {
+  border-bottom: none;
+}
+
+.recent-item strong {
+  color: var(--text-color);
+  font-weight: 600;
+}
+
+.recent-item-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  margin-top: 4px;
+}
+
+/* ============================================================================
+   VACCINATION GRID & CARDS
+   ============================================================================ */
+
+.vaccination-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+.vaccination-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.vaccination-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.vaccination-card-header {
+  margin-bottom: 16px;
+}
+
+.vaccination-card-header h4 {
+  font-size: 1.1rem;
+  color: var(--text-color);
+  margin: 0 0 8px 0;
+}
+
+.vaccination-status {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.vaccination-status.done {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--success);
+}
+
+.vaccination-status.pending {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--warning);
+}
+
+.vaccination-status.scheduled {
+  background: rgba(142, 207, 201, 0.15);
+  color: var(--btn-primary);
+}
+
+.vaccination-info {
+  margin-bottom: 20px;
+}
+
+.vaccination-info-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+
+.vaccination-info-label {
+  font-weight: 600;
+  color: var(--text-light);
+  min-width: 70px;
+}
+
+.vaccination-info-value {
+  color: var(--text-color);
+}
+
+.no-vaccination-message {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+/* ============================================================================
+   ANIMAL CARDS (Featured Animals Grid)
+   ============================================================================ */
+
+.animals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.animal-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.animal-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.animal-card-image {
+  background: linear-gradient(135deg, rgba(142, 207, 201, 0.1) 0%, rgba(240, 151, 151, 0.1) 100%);
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.animal-card-info {
+  padding: 16px;
+}
+
+.animal-card-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-color);
+  margin-bottom: 4px;
+}
+
+.animal-card-type {
+  font-size: 0.85rem;
+  color: var(--btn-primary);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.animal-card-details {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  margin-bottom: 12px;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.animal-card-btn {
+  display: inline-block;
+  width: 100%;
+  padding: 10px;
+  background: var(--btn-primary);
+  color: white;
+  text-align: center;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.animal-card-btn:hover {
+  background: var(--btn-highlight);
+}

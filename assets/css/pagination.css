@@ -1,0 +1,40 @@
+/* ============================================================================
+   PAGINATION
+   ============================================================================ */
+
+.pagination {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 24px;
+  padding: 16px 0;
+}
+
+.pagination a,
+.pagination button,
+.pagination span {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: white;
+  color: var(--text-color);
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.pagination a:hover,
+.pagination button:hover {
+  border-color: var(--btn-primary);
+  background: rgba(142, 207, 201, 0.08);
+  color: var(--btn-primary);
+}
+
+.pagination .active {
+  background: var(--btn-primary);
+  color: white;
+  border-color: var(--btn-primary);
+}

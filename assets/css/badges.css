@@ -1,0 +1,43 @@
+/* ============================================================================
+   BADGES & STATUS INDICATORS
+   ============================================================================ */
+
+.badge,
+.status-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.badge-active,
+.status-active,
+.badge-success,
+.status-success {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--success);
+}
+
+.badge-incomplete,
+.status-pending,
+.badge-warning,
+.status-warning {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--warning);
+}
+
+.badge-inactive,
+.status-inactive,
+.badge-danger,
+.status-danger,
+.status-rejected {
+  background: rgba(220, 38, 38, 0.15);
+  color: var(--danger);
+}
+
+.badge-default {
+  background: rgba(75, 85, 99, 0.1);
+  color: var(--text-light);
+}

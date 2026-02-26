@@ -1,0 +1,47 @@
+/* ============================================================================
+   QUICK ACTION LINKS
+   ============================================================================ */
+
+.quick-links-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.quick-link-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 16px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: white;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  text-align: center;
+  min-height: 90px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  border: none;
+}
+
+.quick-link-card.primary {
+  background: linear-gradient(135deg, #F09797 0%, #E07777 100%);
+}
+
+.quick-link-card.secondary {
+  background: linear-gradient(135deg, #8ECFC9 0%, #7AB9B3 100%);
+}
+
+.quick-link-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.quick-link-text {
+  font-size: 0.95rem;
+  line-height: 1.4;
+  font-weight: 600;
+}
