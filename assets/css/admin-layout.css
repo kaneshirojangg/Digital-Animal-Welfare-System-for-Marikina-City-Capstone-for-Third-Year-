@@ -1,0 +1,60 @@
+/* ============================================================================
+   LAYOUT — .layout, .main-content, .content-wrapper
+   ============================================================================ */
+
+.layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.main-content {
+  padding: 40px;
+  flex: 1;
+}
+
+.content-wrapper {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* ============================================================================
+   PAGE HEADERS & TITLES
+   ============================================================================ */
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.page-header h1,
+.dashboard-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.2rem;
+  color: var(--text-color);
+  margin: 0;
+  font-weight: 700;
+}
+
+.page-header p,
+.page-subtitle {
+  color: var(--text-light);
+  font-size: 0.95rem;
+  margin: 8px 0 0 0;
+}
+
+.page-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-color);
+  margin-bottom: 24px;
+}
+
+.action-bar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}

@@ -1,0 +1,60 @@
+/* ============================================================================
+   EMPTY STATES
+   ============================================================================ */
+
+.empty-state,
+.no-data {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 12px;
+  border: 2px dashed var(--border);
+  color: var(--text-light);
+}
+
+.empty-state-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.empty-state h3 {
+  font-size: 1.3rem;
+  color: var(--text-color);
+  margin-bottom: 8px;
+}
+
+.empty-state p {
+  margin-bottom: 16px;
+  font-size: 0.95rem;
+}
+
+.empty-state-btn {
+  color: white;
+  text-decoration: none;
+  display: inline-block;
+  padding: 10px 18px;
+  background: var(--btn-primary);
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.empty-state-btn:hover {
+  background: var(--btn-highlight);
+  transform: translateY(-2px);
+}
+
+.empty-state-text-primary {
+  font-size: 1rem;
+  margin-bottom: 16px;
+}
+
+.empty-state-text-secondary {
+  font-size: 0.9rem;
+  color: var(--text-light);
+}
+
+.empty-state-actions {
+  margin-top: 16px;
+}
